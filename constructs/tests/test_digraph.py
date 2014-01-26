@@ -28,6 +28,10 @@ class TestDirectedGraph(testtools.TestCase):
         self.assertFalse(g.empty())
         self.assertEqual(1, len(g))
 
+    def test_is_empty(self):
+        g = digraph.DirectedGraph()
+        self.assertTrue(g.empty())
+
     def test_nodes_iter(self):
         g = digraph.DirectedGraph()
         g.add_node(1)
