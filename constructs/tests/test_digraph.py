@@ -65,6 +65,13 @@ class TestDirectedGraph(testtools.TestCase):
         g.remove_node(1)
         self.assertEqual(1, len(g))
 
+    def test_basic_iter(self):
+        g = digraph.DirectedGraph()
+        g.add_node(1)
+        g.add_node(2)
+        g.add_node(3)
+        self.assertEqual([1, 2, 3], list(g))
+
     def test_freeze(self):
         g = digraph.DirectedGraph()
         g.add_node(1)

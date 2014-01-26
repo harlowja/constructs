@@ -48,6 +48,10 @@ class DirectedGraph(object):
     def freeze(self):
         self._frozen = True
 
+    def __iter__(self):
+        for node in self.nodes_iter():
+            yield node
+
     def copy(self):
         c = DirectedGraph(name=self.name)
         for (node, data) in self.nodes_iter(include_data=True):
