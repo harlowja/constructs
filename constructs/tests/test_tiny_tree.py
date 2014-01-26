@@ -27,3 +27,25 @@ class TestTinyTree(testtools.TestCase):
         t.root = tiny_tree.Node("a")
         self.assertFalse(t.empty())
         self.assertEqual(1, t.node_count())
+
+    def test_dfs_iter(self):
+        t = tiny_tree.Tree()
+        t.root = tiny_tree.Node("a")
+        t.root.add(tiny_tree.Node("b"))
+        t.root[0].add(tiny_tree.Node("c"))
+        t.root.add(tiny_tree.Node("d"))
+        nodes = list(t.root.dfs_iter(include_self=True))
+        nodes = [n.item for n in nodes]
+        self.assertEqual(['a', 'b', 'c', 'd'], nodes)
+
+    def test_bfs_iter(self):
+        t = tiny_tree.Tree()
+        t.root = tiny_tree.Node("a")
+        t.root.add(tiny_tree.Node("b"))
+        t.root[0].add(tiny_tree.Node("c"))
+        t.root[0][0].add(tiny_tree.Node("c.1"))
+        t.root[0][0].add(tiny_tree.Node("c.2"))
+        t.root.add(tiny_tree.Node("d"))
+        nodes = list(t.root.bfs_iter(include_self=True))
+        nodes = [n.item for n in nodes]
+        self.assertEqual(['a', 'd', 'b', 'c', 'c.2', 'c.1'], nodes)
