@@ -38,34 +38,45 @@ class DirectedGraph(object):
     def __len__(self):
         return len(self._nodes)
 
+    def __contains__(self, node):
+        return self.has_node(node)
+
+    def has_node(self, node):
+        return node in self._nodes
+
     def add_node(self, node, **data):
         if node not in self._nodes:
             self._nodes[node] = {}
-            self._adj[node] = []
+            self._adj[node] = OrderedDict()
         self._nodes[node].update(data)
 
     def edges_iter(self, include_data=False):
         for u in six.iterkeys(self._nodes):
-            for (v, data) in self._adj[u]:
+            for (v, data) in six.iteritems(self._adj[u]):
                 if include_data:
                     yield (u, v, data)
                 else:
                     yield (u, v)
 
+    def remove_node(self, node):
+        if not self.has_node(node):
+            raise ValueError("Node %r not found" % (node))
+        self._nodes.pop(node)
+        self._adj.pop(node)
+        for (_u, connected_to) in six.iteritems(self._adj):
+            if node in connected_to:
+                connected_to.pop(node)
+
     def add_edge(self, u, v, **data):
-        if u not in self._nodes:
+        if not self.has_node(u):
             raise ValueError("Node %r not found" % (u))
-        if v not in self._nodes:
+        if not self.has_node(v):
             raise ValueError("Node %r not found" % (v))
-        idx = -1
-        for i, (v2, _data) in enumerate(self._adj[u]):
-            if v2 == v:
-                idx = i
-                break
-        if idx == -1:
-            self._adj[u].append((v, data))
+        connected_to = self._adj[u]
+        if v in connected_to:
+            connected_to[v].update(data)
         else:
-            self._adj[u][idx][1].update(data)
+            connected_to[v] = dict(data)
 
     def nodes_iter(self, include_data=False):
         for (node, data) in six.iteritems(self._nodes):
