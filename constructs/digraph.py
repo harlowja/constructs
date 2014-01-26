@@ -38,6 +38,9 @@ class DirectedGraph(object):
     def __contains__(self, node):
         return self.has_node(node)
 
+    def empty(self):
+        return len(self._nodes) == 0
+
     def has_node(self, node):
         return node in self._nodes
 
@@ -82,6 +85,16 @@ class DirectedGraph(object):
         for (_u, connected_to) in six.iteritems(self._adj):
             if node in connected_to:
                 connected_to.pop(node)
+
+    def has_edge(self, u, v):
+        if not self.has_node(u):
+            raise ValueError("Node %r not found" % (u))
+        if not self.has_node(v):
+            raise ValueError("Node %r not found" % (v))
+        connected_to = self._adj[u]
+        if v in connected_to:
+            return True
+        return False
 
     def add_edge(self, u, v, **data):
         if not self.has_node(u):
