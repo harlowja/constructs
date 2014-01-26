@@ -66,7 +66,7 @@ class _BFSIter(object):
 
 
 class Tree(object):
-    """A tree root class."""
+    """A tree class."""
     def __init__(self, root=None):
         self.root = root
         self.metadata = {}
