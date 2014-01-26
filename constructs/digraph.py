@@ -18,17 +18,14 @@
 
 import six
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
+from constructs import ordereddict
 
 
 class DirectedGraph(object):
     """A directed graph class."""
     def __init__(self, name=None):
         self._adj = {}
-        self._nodes = OrderedDict()
+        self._nodes = ordereddict.OrderedDict()
         self._name = name
 
     @property
@@ -47,7 +44,7 @@ class DirectedGraph(object):
     def add_node(self, node, **data):
         if node not in self._nodes:
             self._nodes[node] = {}
-            self._adj[node] = OrderedDict()
+            self._adj[node] = ordereddict.OrderedDict()
         self._nodes[node].update(data)
 
     def edges_iter(self, include_data=False):
