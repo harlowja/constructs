@@ -18,6 +18,8 @@
 
 import six
 
+from six.moves import queue  # noqa
+
 
 class _DFSIter(object):
     """Depth first iterator (non-recursive) over the child nodes."""
@@ -39,6 +41,28 @@ class _DFSIter(object):
             # Traverse the left & right subtree.
             for child_node in reversed(list(node)):
                 stack.append(child_node)
+
+
+class _BFSIter(object):
+    """Breadth first iterator (non-recursive) over the child nodes."""
+    def __init__(self, root, include_self=False):
+        self.root = root
+        self.include_self = bool(include_self)
+
+    def __iter__(self):
+        q = queue.Queue()
+        if self.include_self:
+            q.put(self.root)
+        else:
+            for child_node in self.root:
+                q.put(child_node)
+        while not q.empty():
+            node = q.get()
+            # Visit the node.
+            yield node
+            # Traverse the left & right subtree.
+            for child_node in reversed(list(node)):
+                q.put(child_node)
 
 
 class Tree(object):
@@ -122,6 +146,10 @@ class Node(object):
     def dfs_iter(self, include_self=False):
         """Depth first iteration (non-recursive) over the child nodes."""
         return _DFSIter(self, include_self=include_self)
+
+    def bfs_iter(self, include_self=False):
+        """Breadth first iteration (non-recursive) over the child nodes."""
+        return _BFSIter(self, include_self=include_self)
 
 
 def _pformat(node, level):
