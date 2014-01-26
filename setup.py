@@ -18,29 +18,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from setuptools import find_packages
-from setuptools import setup
+import setuptools
 
-
-setup(name='constructs',
-      version='0.0.1',
-      description='Primitive structures and constructs',
-      author="Joshua Harlow",
-      author_email='harlowja@yahoo-inc.com',
-      url='http://github.com/harlowja/constructs/',
-      license="ASL 2.0",
-      install_requires=[
-          'six',
-      ],
-      packages=find_packages(),
-      classifiers=[
-        "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: Apache Software License",
-        "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python",
-        'Topic :: Software Development',
-        'Topic :: Software Development :: Libraries',
-      ],
-      keywords="types constructs primitives",
-      long_description=open("README.md", 'rb').read(),
-     )
+setuptools.setup(
+    setup_requires=['pbr'],
+    pbr=True)
