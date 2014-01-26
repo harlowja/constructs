@@ -93,6 +93,8 @@ class TestDirectedGraph(testtools.TestCase):
         self.assertEqual(1, len(g))
         self.assertEqual(2, len(g2))
         g2.add_edge(1, 2)
+        self.assertEqual(1, len(list(g2.edges_iter())))
+        self.assertEqual(0, len(list(g.edges_iter())))
 
     def test_add_remove_node_edges(self):
         g = digraph.DirectedGraph()
