@@ -55,18 +55,24 @@ class DirectedGraph(object):
                 else:
                     yield (u, v)
 
-    def successors_iter(self, node):
+    def successors_iter(self, node, include_data=False):
         if not self.has_node(node):
             raise ValueError("Node %r not found" % (node))
-        for succ in six.iterkeys(self._adj[node]):
-            yield succ
+        for (succ, data) in six.iteritems(self._adj[node]):
+            if include_data:
+                yield (succ, data)
+            else:
+                yield succ
 
-    def predecessors_iter(self, node):
+    def predecessors_iter(self, node, include_data=False):
         if not self.has_node(node):
             raise ValueError("Node %r not found" % (node))
         for (pred, connected_to) in six.iteritems(self._adj):
             if node in connected_to:
-                yield pred
+                if include_data:
+                    yield (pred, connected_to[node])
+                else:
+                    yield pred
 
     def remove_node(self, node):
         if not self.has_node(node):
