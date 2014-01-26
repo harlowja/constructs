@@ -65,6 +65,28 @@ class TestDirectedGraph(testtools.TestCase):
         g.remove_node(1)
         self.assertEqual(1, len(g))
 
+    def test_freeze(self):
+        g = digraph.DirectedGraph()
+        g.add_node(1)
+        self.assertEqual(1, len(g))
+        g.freeze()
+        self.assertRaises(RuntimeError, g.remove_node, 1)
+        self.assertEqual(1, len(g))
+        self.assertRaises(RuntimeError, g.add_node, 2)
+        self.assertRaises(RuntimeError, g.add_edge, 1, 1)
+
+    def test_freeze_copy(self):
+        g = digraph.DirectedGraph()
+        g.add_node(1)
+        self.assertEqual(1, len(g))
+        g.freeze()
+        self.assertRaises(RuntimeError, g.remove_node, 1)
+        g2 = g.copy()
+        g2.add_node(2)
+        self.assertEqual(1, len(g))
+        self.assertEqual(2, len(g2))
+        g2.add_edge(1, 2)
+
     def test_add_remove_node_edges(self):
         g = digraph.DirectedGraph()
         g.add_node(1)

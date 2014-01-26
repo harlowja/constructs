@@ -27,6 +27,7 @@ class DirectedGraph(object):
         self._adj = {}
         self._nodes = ordereddict.OrderedDict()
         self._name = name
+        self._frozen = False
 
     @property
     def name(self):
@@ -44,7 +45,20 @@ class DirectedGraph(object):
     def has_node(self, node):
         return node in self._nodes
 
+    def freeze(self):
+        self._frozen = True
+
+    def copy(self):
+        c = DirectedGraph(name=self.name)
+        for (node, data) in self.nodes_iter(include_data=True):
+            c.add_node(node, **data)
+        for (u, v, data) in self.edges_iter(include_data=True):
+            c.add_edge(u, v, **data)
+        return c
+
     def add_node(self, node, **data):
+        if self._frozen:
+            raise RuntimeError("Can not add nodes to a frozen graph")
         if node not in self._nodes:
             self._nodes[node] = {}
             self._adj[node] = ordereddict.OrderedDict()
@@ -80,6 +94,8 @@ class DirectedGraph(object):
     def remove_node(self, node):
         if not self.has_node(node):
             raise ValueError("Node %r not found" % (node))
+        if self._frozen:
+            raise RuntimeError("Can not remove nodes from a frozen graph")
         self._nodes.pop(node)
         self._adj.pop(node)
         for (_u, connected_to) in six.iteritems(self._adj):
@@ -101,6 +117,8 @@ class DirectedGraph(object):
             raise ValueError("Node %r not found" % (u))
         if not self.has_node(v):
             raise ValueError("Node %r not found" % (v))
+        if self._frozen:
+            raise RuntimeError("Can not add edges to a frozen graph")
         connected_to = self._adj[u]
         if v in connected_to:
             connected_to[v].update(data)
