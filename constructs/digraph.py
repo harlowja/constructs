@@ -25,6 +25,7 @@ class DirectedGraph(object):
     """A directed graph class."""
     def __init__(self, name=None):
         self._adj = {}
+        self._pred = {}
         self._nodes = ordereddict.OrderedDict()
         self._name = name
         self._frozen = False
@@ -66,6 +67,7 @@ class DirectedGraph(object):
         if node not in self._nodes:
             self._nodes[node] = {}
             self._adj[node] = ordereddict.OrderedDict()
+            self._pred[node] = []
         self._nodes[node].update(data)
 
     def edges_iter(self, include_data=False):
@@ -88,12 +90,11 @@ class DirectedGraph(object):
     def predecessors_iter(self, node, include_data=False):
         if not self.has_node(node):
             raise ValueError("Node %r not found" % (node))
-        for (pred, connected_to) in six.iteritems(self._adj):
-            if node in connected_to:
-                if include_data:
-                    yield (pred, connected_to[node])
-                else:
-                    yield pred
+        for pred in self._pred[node]:
+            if not include_data:
+                yield pred
+            else:
+                yield (pred, self._adj[pred][node])
 
     def remove_node(self, node):
         if not self.has_node(node):
@@ -101,10 +102,14 @@ class DirectedGraph(object):
         if self._frozen:
             raise RuntimeError("Can not remove nodes from a frozen graph")
         self._nodes.pop(node)
+        self._pred.pop(node)
         self._adj.pop(node)
-        for (_u, connected_to) in six.iteritems(self._adj):
+        for (_node, connected_to) in six.iteritems(self._adj):
             if node in connected_to:
                 connected_to.pop(node)
+        for (_node, preds) in six.iteritems(self._pred):
+            if node in preds:
+                preds.remove(node)
 
     def has_edge(self, u, v):
         if not self.has_node(u):
@@ -124,6 +129,8 @@ class DirectedGraph(object):
         if self._frozen:
             raise RuntimeError("Can not add edges to a frozen graph")
         connected_to = self._adj[u]
+        if u not in self._pred[v]:
+            self._pred[v].append(u)
         if v in connected_to:
             connected_to[v].update(data)
         else:
