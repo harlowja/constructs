@@ -21,6 +21,25 @@ import six
 from constructs import ordereddict
 
 
+class _DFSIter(object):
+    def __init__(self, graph, source):
+        self.graph = graph
+        self.source = source
+
+    def __iter__(self):
+        if not self.graph.has_node(self.source):
+            raise ValueError("Source node %r not found" % (self.source))
+        stack = [self.source]
+        visited = set()
+        while stack:
+            node = stack.pop()
+            if id(node) in visited:
+                continue
+            yield node
+            visited.add(id(node))
+            stack.extend(self.successors_iter(node))
+
+
 class DirectedGraph(object):
     """A directed graph class."""
     def __init__(self, name=None):
@@ -69,6 +88,9 @@ class DirectedGraph(object):
             self._adj[node] = ordereddict.OrderedDict()
             self._pred[node] = []
         self._nodes[node].update(data)
+
+    def dfs_iter(self, source):
+        return _DFSIter(self, source)
 
     def edges_iter(self, include_data=False):
         for u in six.iterkeys(self._nodes):
