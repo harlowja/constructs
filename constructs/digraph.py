@@ -33,10 +33,10 @@ class _DFSIter(object):
         visited = set()
         while stack:
             node = stack.pop()
-            if id(node) in visited:
+            if node in visited:
                 continue
             yield node
-            visited.add(id(node))
+            visited.add(node)
             stack.extend(self.successors_iter(node))
 
 
